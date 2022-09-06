@@ -80,4 +80,10 @@ class TicketManagerTest {
         assertThrows(NotFoundException.class, () -> repository.removeById(10));
     }
 
+    @Test
+    void shouldSearchById1() {
+        Ticket actual = repository.findById(5);
+        Ticket expected = ticket5;
+        assertEquals(expected, actual);
+    }
 }

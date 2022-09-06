@@ -1,3 +1,4 @@
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -85,5 +86,33 @@ class TicketManagerTest {
         Ticket actual = repository.findById(5);
         Ticket expected = ticket5;
         assertEquals(expected, actual);
+    }
+
+    @Test
+    public void shouldRemoveSeveralTicketsIfIdCorrect() {
+        TicketRepository repository = new TicketRepository();
+        repository.save(ticket1);
+        repository.save(ticket2);
+        repository.save(ticket3);
+        repository.save(ticket4);
+        repository.save(ticket5);
+        repository.removeById(ticket1.getId());
+        repository.removeById(ticket4.getId());
+
+        Ticket[] expected = {ticket2, ticket3, ticket5};
+        Ticket[] actual = repository.findAll();
+
+        Assertions.assertArrayEquals(expected, actual);
+    }
+    @Test
+    public void shouldRemoveNothingIfIdNotCorrect() {
+        TicketRepository repository = new TicketRepository();
+        repository.save(ticket1);
+        repository.save(ticket2);
+        repository.save(ticket3);
+        repository.save(ticket4);
+        repository.save(ticket5);
+
+        Assertions.assertThrows(RuntimeException.class, () -> repository.removeById(999));
     }
 }

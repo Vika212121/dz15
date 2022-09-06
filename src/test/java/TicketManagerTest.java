@@ -2,6 +2,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class TicketManagerTest {
@@ -18,6 +20,7 @@ class TicketManagerTest {
 
     TicketRepository repository = new TicketRepository();
     TicketManager manager = new TicketManager(repository);
+    TicketByTimeAscComparator comparator = new TicketByTimeAscComparator();
 
     @BeforeEach
     public void setUp() {
@@ -32,20 +35,6 @@ class TicketManagerTest {
         manager.add(ticket9);
     }
 
-    @Test
-    void shouldAddTicket() {
-        Ticket[] actual = repository.findAll();
-        Ticket[] expected = new Ticket[]{ticket1, ticket2, ticket3, ticket4, ticket5, ticket6, ticket7, ticket8,
-                ticket9};
-        assertArrayEquals(expected, actual);
-    }
-
-    @Test
-    void shouldFindTicket() {
-        Ticket[] actual = manager.searchBy("LED", "VKO");
-        Ticket[] expected = new Ticket[]{ticket5, ticket3, ticket1, ticket7};
-        assertArrayEquals(expected, actual);
-    }
 
     @Test
     void shouldNotFindTicket() {
@@ -65,15 +54,6 @@ class TicketManagerTest {
     void shouldSearchByNotExistId() {
         Ticket actual = repository.findById(10);
         assertNull(actual);
-    }
-
-    @Test
-    void shouldRemoveById() {
-        repository.removeById(2);
-        Ticket[] actual = repository.findAll();
-        Ticket[] expected = new Ticket[]{ticket1, ticket3, ticket4, ticket5, ticket6, ticket7, ticket8, ticket9};
-
-        assertArrayEquals(expected, actual);
     }
 
     @Test
@@ -114,5 +94,25 @@ class TicketManagerTest {
         repository.save(ticket5);
 
         Assertions.assertThrows(RuntimeException.class, () -> repository.removeById(999));
+    }
+
+    @BeforeEach
+    public void addTickets() {
+        manager.add(ticket1);
+        manager.add(ticket2);
+        manager.add(ticket3);
+        manager.add(ticket4);
+        manager.add(ticket5);
+    }
+    @Test
+    void shouldSortByPrice() {
+        Ticket ticket1 = new Ticket(1, 3100, "LED", "ASF", 60);
+        Ticket ticket2 = new Ticket(2, 3000, "LED", "AAQ", 180);
+        Ticket ticket3 = new Ticket(3, 20000, "LED", "SCO", 6230);
+        Ticket ticket4 = new Ticket(4, 1500, "LED", "VKO", 60);
+        Ticket[] expected = new Ticket[]{ticket4, ticket2, ticket1, ticket3};
+        Ticket[] actual = new Ticket[]{ticket1, ticket2, ticket3, ticket4};
+        Arrays.sort(actual, comparator);
+        assertArrayEquals(expected, actual);
     }
 }

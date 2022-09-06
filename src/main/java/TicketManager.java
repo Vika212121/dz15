@@ -3,6 +3,7 @@ import java.util.Arrays;
 public class TicketManager {
 
     private final TicketRepository repository;
+    private TicketByTimeAscComparator comparator;
 
     public TicketManager(TicketRepository repository) {
         this.repository = repository;
